@@ -1,7 +1,10 @@
 ﻿import axios from 'axios';
 
+// Use relative path for API (will work on same domain)
+const API_URL = '/api';
+
 const API = axios.create({
-  baseURL: '/api',
+  baseURL: API_URL,
   headers: { 'Content-Type': 'application/json' },
 });
 
