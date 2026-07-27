@@ -1,0 +1,60 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Logo Preview</title>
+    <style>
+        body {
+            background: #0a0a1e;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 40px;
+            padding: 40px;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .logo-card {
+            background: rgba(255,255,255,0.03);
+            border-radius: 16px;
+            padding: 30px;
+            border: 1px solid rgba(255,255,255,0.06);
+            text-align: center;
+            min-width: 250px;
+            transition: all 0.3s ease;
+        }
+        .logo-card:hover {
+            border-color: rgba(102,126,234,0.3);
+            transform: translateY(-5px);
+        }
+        .logo-card h3 {
+            color: rgba(255,255,255,0.5);
+            font-size: 14px;
+            font-weight: 400;
+            margin-bottom: 20px;
+        }
+        .logo-card svg {
+            max-width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="logo-card">
+        <h3>Logo 1: AI Chip</h3>
+        <img src="logo1-ai-chip.svg" alt="Logo 1" />
+    </div>
+    <div class="logo-card">
+        <h3>Logo 2: Shield Badge</h3>
+        <img src="logo2-shield.svg" alt="Logo 2" />
+    </div>
+    <div class="logo-card">
+        <h3>Logo 3: Minimalist</h3>
+        <img src="logo3-minimalist.svg" alt="Logo 3" />
+    </div>
+    <div class="logo-card">
+        <h3>Logo 4: Premium</h3>
+        <img src="logo4-premium.svg" alt="Logo 4" />
+    </div>
+</body>
+</html>
