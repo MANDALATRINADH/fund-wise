@@ -17,11 +17,12 @@ const StartupList = ({ refresh, userId }) => {
     setLoading(true);
     try {
       const res = await fetchMyStartups(userId);
-      console.log('Fetched startups:', res.data);
-      setStartups(res.data || []);
+      console.log('Startups data:', res.data);
+      setStartups(Array.isArray(res.data) ? res.data : []);
     } catch (err) {
       console.error('Error loading startups:', err);
       setError('Failed to load your startups');
+      setStartups([]);
     } finally {
       setLoading(false);
     }
@@ -49,7 +50,7 @@ const StartupList = ({ refresh, userId }) => {
     );
   }
 
-  if (startups.length === 0) {
+  if (!startups || startups.length === 0) {
     return (
       <div>
         <h2 style={{ marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '12px', color: '#ffffff' }}>

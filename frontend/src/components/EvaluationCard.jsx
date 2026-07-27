@@ -8,7 +8,7 @@ const EvaluationCard = ({ startup }) => {
     marketScore, teamScore, productScore, financialScore,
     overallScore, matchedInvestors, matchedInvestorDetails,
     feedback, detailedFeedback, status
-  } = startup;
+  } = startup || {};
 
   const getScoreColor = (score) => {
     if (score >= 80) return '#22c55e';
@@ -21,6 +21,11 @@ const EvaluationCard = ({ startup }) => {
     if (score >= 60) return '💪';
     return '📈';
   };
+
+  // If no startup data, show nothing
+  if (!startup || !startup.name) {
+    return null;
+  }
 
   return (
     <div className="evaluation-card">
@@ -125,16 +130,7 @@ const EvaluationCard = ({ startup }) => {
                     <span>💰 K - M</span>
                   </div>
                   {inv.website && (
-                    <a 
-                      href={inv.website} 
-                      target="_blank" 
-                      rel="noopener noreferrer" 
-                      className="investor-link"
-                      onClick={(e) => {
-                        // Make sure link opens properly
-                        console.log('Opening investor website:', inv.website);
-                      }}
-                    >
+                    <a href={inv.website} target="_blank" rel="noopener noreferrer" className="investor-link">
                       <i className="fas fa-external-link-alt"></i> Visit Website
                     </a>
                   )}

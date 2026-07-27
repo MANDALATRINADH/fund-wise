@@ -1,7 +1,7 @@
 ﻿import axios from 'axios';
 
-// Use relative path for API (will work on same domain)
-const API_URL = '/api';
+// Use the FULL backend URL from Render
+const API_URL = 'https://fund-wise-backend.onrender.com/api';
 
 const API = axios.create({
   baseURL: API_URL,
