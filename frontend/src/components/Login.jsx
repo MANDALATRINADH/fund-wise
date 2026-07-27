@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
 
@@ -197,7 +197,7 @@ const Login = ({ onLogin }) => {
         </div>
       </div>
 
-      <style>{
+      <style>{`
         .google-login-wrapper {
           margin-bottom: 8px;
         }
@@ -471,7 +471,7 @@ const Login = ({ onLogin }) => {
             font-size: 24px;
           }
         }
-      }</style>
+      `}</style>
     </GoogleOAuthProvider>
   );
 };
