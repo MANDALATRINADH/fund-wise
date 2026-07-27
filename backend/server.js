@@ -8,7 +8,7 @@ app.use(cors());
 app.use(express.json());
 
 app.get('/', (req, res) => {
-  res.json({ message: '✅ Backend is running on Render!' });
+  res.json({ message: 'Backend is running on Render!' });
 });
 
 app.get('/api/health', (req, res) => {
@@ -16,5 +16,5 @@ app.get('/api/health', (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(🚀 Server running on port );
+  console.log('Server running on port ' + PORT);
 });
