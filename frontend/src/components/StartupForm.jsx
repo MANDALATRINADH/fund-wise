@@ -62,7 +62,13 @@ const StartupForm = ({ onSuccess, user }) => {
         userEmail: user?.email || 'anonymous@email.com',
         userName: user?.name || 'Anonymous User'
       };
+      
+      console.log('📤 Submitting startup:', payload);
+      
       const res = await submitStartup(payload);
+      
+      console.log('📥 Response:', res.status, res.data);
+      
       if (res.status === 201) {
         setForm({ 
           name: '', description: '', industry: '', teamSize: '', fundingGoal: '',
@@ -74,6 +80,7 @@ const StartupForm = ({ onSuccess, user }) => {
         alert('✅ Startup submitted! AI evaluation completed.');
       }
     } catch (err) {
+      console.error('❌ Submit error:', err);
       setError(err.response?.data?.error || 'Something went wrong');
     } finally {
       setLoading(false);
