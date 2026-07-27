@@ -1,0 +1,8 @@
+﻿{
+  "name": "fund-wise",
+  "version": "1.0.0",
+  "description": "AI Funding Platform",
+  "scripts": {
+    "vercel-build": "echo 'Root project'"
+  }
+}
