@@ -9,16 +9,33 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Middleware
-app.use(cors());
+// CORS configuration
+const allowedOrigins = [
+  'https://fund-wise-olive.vercel.app',
+  'https://fund-wise.vercel.app',
+  'http://localhost:3000',
+  'http://localhost:3001',
+  'http://localhost:3002'
+];
+
+app.use(cors({
+  origin: allowedOrigins,
+  credentials: true
+}));
+
 app.use(express.json());
 
 // Routes
 app.use('/api/startups', startupRoutes);
 
-// Health check endpoint
+// Health check
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', message: 'Server is running' });
+  res.json({ status: 'ok', message: 'Backend is running on Render' });
+});
+
+// Root route
+app.get('/', (req, res) => {
+  res.json({ message: 'Fund-Wise API is running' });
 });
 
 // MongoDB connection
@@ -28,12 +45,13 @@ if (MONGODB_URI) {
   mongoose.connect(MONGODB_URI)
     .then(() => {
       console.log('✅ Connected to MongoDB');
-      app.listen(PORT, () => console.log(🚀 Server running on port ));
     })
     .catch((err) => console.error('❌ MongoDB connection error:', err));
 } else {
-  console.log('⚠️ No MongoDB URI provided. Running without database.');
-  app.listen(PORT, () => console.log(🚀 Server running on port  (No DB)));
+  console.log('⚠️ No MongoDB URI provided');
 }
 
-export default app;
+// Start server
+app.listen(PORT, () => {
+  console.log(🚀 Server running on port );
+});
