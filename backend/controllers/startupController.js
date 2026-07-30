@@ -177,6 +177,7 @@ const INVESTOR_DATABASE = [
 function evaluateStartup(startup) {
   const { description, industry, teamSize, fundingGoal, yearFounded, stage, businessModel } = startup;
   
+  // AI Scores
   let innovationScore = Math.floor(Math.random() * 20) + 70;
   let viabilityScore = Math.floor(Math.random() * 20) + 60;
   let teamScore = teamSize >= 10 ? 85 : teamSize >= 5 ? 75 : 60;
@@ -212,7 +213,7 @@ function evaluateStartup(startup) {
   
   const matchedInvestors = matchInvestors(startup, INVESTOR_DATABASE);
   
-  console.log('Matched Investors:', matchedInvestors);
+  console.log('Matched Investors:', JSON.stringify(matchedInvestors, null, 2));
   
   let feedback = '';
   if (overallScore > 80) feedback = '🚀 Excellent! Your startup is well-positioned for funding. ';
@@ -266,7 +267,8 @@ function matchInvestors(startup, investors) {
 // ========== CONTROLLER FUNCTIONS ==========
 export const createStartup = async (req, res) => {
   try {
-    console.log('Creating startup with data:', req.body);
+    console.log('📝 Creating startup...');
+    console.log('📤 Received data:', req.body);
     
     const { 
       name, description, industry, teamSize, fundingGoal,
@@ -276,6 +278,7 @@ export const createStartup = async (req, res) => {
     } = req.body;
     
     if (!name || !description || !industry || !teamSize || !fundingGoal) {
+      console.log('❌ Missing required fields');
       return res.status(400).json({ error: 'All required fields must be filled' });
     }
     
@@ -303,14 +306,19 @@ export const createStartup = async (req, res) => {
       status: 'Submitted'
     };
     
+    console.log('📊 Startup data:', startupData);
+    
     const evaluation = evaluateStartup(startupData);
     const newStartup = new Startup({ ...startupData, ...evaluation });
     const saved = await newStartup.save();
     
-    console.log('Startup saved with investors:', saved.matchedInvestorDetails);
+    console.log('✅ Startup saved! ID:', saved._id);
+    console.log('📊 Matched Investors:', saved.matchedInvestorDetails.length);
+    console.log('💬 Feedback:', saved.feedback);
+    
     res.status(201).json(saved);
   } catch (error) {
-    console.error('Error creating startup:', error);
+    console.error('❌ Error creating startup:', error);
     res.status(500).json({ error: error.message || 'Something went wrong' });
   }
 };
@@ -318,14 +326,16 @@ export const createStartup = async (req, res) => {
 export const getMyStartups = async (req, res) => {
   try {
     const { userId } = req.query;
+    console.log('📋 Fetching startups for userId:', userId);
+    
     if (!userId) {
       return res.status(400).json({ error: 'User ID is required' });
     }
     const startups = await Startup.find({ userId }).sort({ createdAt: -1 });
-    console.log('Found ' + startups.length + ' startups for user ' + userId);
+    console.log('📋 Found ' + startups.length + ' startups');
     res.json(startups);
   } catch (error) {
-    console.error('Error fetching startups:', error);
+    console.error('❌ Error fetching startups:', error);
     res.status(500).json({ error: error.message });
   }
 };
@@ -333,6 +343,7 @@ export const getMyStartups = async (req, res) => {
 export const getStartups = async (req, res) => {
   try {
     const startups = await Startup.find().sort({ createdAt: -1 });
+    console.log('📋 Found ' + startups.length + ' total startups');
     res.json(startups);
   } catch (error) {
     res.status(500).json({ error: error.message });

@@ -9,33 +9,36 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// CORS configuration
-const allowedOrigins = [
-  'https://fund-wise-olive.vercel.app',
-  'https://fund-wise.vercel.app',
-  'http://localhost:3000',
-  'http://localhost:3001',
-  'http://localhost:3002'
-];
-
+// CORS configuration - allow all origins for testing
 app.use(cors({
-  origin: allowedOrigins,
+  origin: '*',
   credentials: true
 }));
 
 app.use(express.json());
 
-// Routes
+// Log all requests for debugging
+app.use((req, res, next) => {
+  console.log(📥  );
+  next();
+});
+
+// Routes - Make sure this is mounted correctly
 app.use('/api/startups', startupRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', message: 'Backend is running on Vercel' });
+  res.json({ status: 'ok', message: 'Backend is running on Render' });
 });
 
 // Root route
 app.get('/', (req, res) => {
   res.json({ message: 'Fund-Wise API is running' });
+});
+
+// 404 handler for undefined routes
+app.use((req, res) => {
+  res.status(404).json({ error: Route   not found });
 });
 
 // MongoDB connection
@@ -51,10 +54,7 @@ if (MONGODB_URI) {
   console.log('⚠️ No MongoDB URI provided');
 }
 
-// For Vercel serverless - export app
-export default app;
-
-// For local development
-if (process.env.NODE_ENV !== 'production') {
-  app.listen(PORT, () => console.log(🚀 Server running on port ));
-}
+// Start server
+app.listen(PORT, () => {
+  console.log(🚀 Server running on port );
+});
