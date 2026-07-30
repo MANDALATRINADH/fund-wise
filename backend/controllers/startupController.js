@@ -91,8 +91,8 @@ function matchInvestors(startup, investors) {
 // ========== CONTROLLER FUNCTIONS ==========
 export const createStartup = async (req, res) => {
   try {
-    console.log('📝 Creating startup...');
-    console.log('📤 Received:', req.body);
+    console.log('Creating startup...');
+    console.log('Received:', req.body);
     
     const { name, description, industry, teamSize, fundingGoal, stage, userId, userEmail } = req.body;
     
@@ -116,10 +116,10 @@ export const createStartup = async (req, res) => {
     const newStartup = new Startup({ ...startupData, ...evaluation });
     const saved = await newStartup.save();
     
-    console.log('✅ Startup saved! ID:', saved._id);
+    console.log('Startup saved! ID:', saved._id);
     res.status(201).json(saved);
   } catch (error) {
-    console.error('❌ Error:', error);
+    console.error('Error:', error);
     res.status(500).json({ error: error.message });
   }
 };
@@ -127,16 +127,16 @@ export const createStartup = async (req, res) => {
 export const getMyStartups = async (req, res) => {
   try {
     const { userId } = req.query;
-    console.log('📋 Fetching for userId:', userId);
+    console.log('Fetching for userId:', userId);
     
     if (!userId) {
       return res.status(400).json({ error: 'User ID is required' });
     }
     const startups = await Startup.find({ userId }).sort({ createdAt: -1 });
-    console.log('📋 Found:', startups.length);
+    console.log('Found:', startups.length);
     res.json(startups);
   } catch (error) {
-    console.error('❌ Error:', error);
+    console.error('Error:', error);
     res.status(500).json({ error: error.message });
   }
 };

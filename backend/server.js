@@ -19,11 +19,11 @@ app.use(express.json());
 
 // Log all requests
 app.use((req, res, next) => {
-  console.log(📥  );
+  console.log('Request:', req.method, req.url);
   next();
 });
 
-// Health check - THIS MUST BE BEFORE OTHER ROUTES
+// Health check
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', message: 'Backend is running on Render' });
 });
@@ -38,7 +38,7 @@ app.use('/api/startups', startupRoutes);
 
 // 404 handler
 app.use((req, res) => {
-  res.status(404).json({ error: Route   not found });
+  res.status(404).json({ error: 'Route not found: ' + req.method + ' ' + req.url });
 });
 
 // MongoDB connection
@@ -47,14 +47,14 @@ const MONGODB_URI = process.env.MONGODB_URI;
 if (MONGODB_URI) {
   mongoose.connect(MONGODB_URI)
     .then(() => {
-      console.log('✅ Connected to MongoDB');
+      console.log('Connected to MongoDB');
     })
-    .catch((err) => console.error('❌ MongoDB connection error:', err));
+    .catch((err) => console.error('MongoDB connection error:', err));
 } else {
-  console.log('⚠️ No MongoDB URI provided');
+  console.log('No MongoDB URI provided');
 }
 
 // Start server
 app.listen(PORT, () => {
-  console.log(🚀 Server running on port );
+  console.log('Server running on port ' + PORT);
 });
