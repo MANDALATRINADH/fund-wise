@@ -1,6 +1,6 @@
 ﻿import Startup from '../models/Startup.js';
 
-// ========== SIMPLE INVESTOR DATABASE ==========
+// ========== INVESTOR DATABASE ==========
 const INVESTOR_DATABASE = [
   {
     name: 'Sequoia Capital',
@@ -31,6 +31,26 @@ const INVESTOR_DATABASE = [
     maxInvestment: 50000000,
     reputation: 9.7,
     successRate: 94
+  },
+  {
+    name: 'Techstars',
+    type: 'Accelerator',
+    industries: ['All Industries'],
+    stageFocus: ['Pre-seed', 'Seed'],
+    minInvestment: 120000,
+    maxInvestment: 500000,
+    reputation: 9.2,
+    successRate: 88
+  },
+  {
+    name: '500 Startups',
+    type: 'VC',
+    industries: ['FinTech', 'Digital Media'],
+    stageFocus: ['Seed', 'Series A'],
+    minInvestment: 150000,
+    maxInvestment: 3000000,
+    reputation: 9.0,
+    successRate: 85
   }
 ];
 
@@ -44,13 +64,14 @@ function evaluateStartup(startup) {
   const marketScore = Math.floor(Math.random() * 20) + 70;
   const productScore = Math.floor(Math.random() * 20) + 60;
   const financialScore = fundingGoal <= 500000 ? 80 : 60;
+  const overallScore = Math.round((innovationScore + viabilityScore + teamScore + marketScore + productScore + financialScore) / 6);
   
-  const overallScore = (innovationScore + viabilityScore + teamScore + marketScore + productScore + financialScore) / 6;
-  
-  // Match investors
   const matchedInvestors = matchInvestors(startup, INVESTOR_DATABASE);
   
-  const feedback = 'Your startup shows good potential. Consider refining your business model.';
+  let feedback = '';
+  if (overallScore > 80) feedback = 'Excellent! Your startup is well-positioned for funding. ';
+  else if (overallScore > 65) feedback = 'Good potential! With some refinements, you could be funding-ready. ';
+  else feedback = 'Promising idea! Focus on improving key areas. ';
   
   return {
     innovationScore: Math.round(innovationScore),
@@ -79,13 +100,13 @@ function matchInvestors(startup, investors) {
     .map(investor => {
       let score = 0;
       if (investor.industries.includes(industry) || investor.industries.includes('All Industries')) score += 30;
-      if (investor.stageFocus.includes(stage)) score += 25;
+      if (investor.stageFocus && investor.stageFocus.includes(stage)) score += 25;
       if (investor.minInvestment <= fundingGoal && fundingGoal <= investor.maxInvestment) score += 25;
       score += (investor.reputation || 0) * 2;
       return { ...investor, matchScore: Math.round(score) };
     })
     .sort((a, b) => b.matchScore - a.matchScore)
-    .slice(0, 3);
+    .slice(0, 4);
 }
 
 // ========== CONTROLLER FUNCTIONS ==========
@@ -94,7 +115,7 @@ export const createStartup = async (req, res) => {
     console.log('Creating startup...');
     console.log('Received:', req.body);
     
-    const { name, description, industry, teamSize, fundingGoal, stage, userId, userEmail } = req.body;
+    const { name, description, industry, teamSize, fundingGoal, stage, userId, userEmail, userName } = req.body;
     
     if (!name || !description || !industry || !teamSize || !fundingGoal) {
       return res.status(400).json({ error: 'All required fields must be filled' });
@@ -109,6 +130,7 @@ export const createStartup = async (req, res) => {
       stage: stage || 'Pre-seed',
       userId: userId || 'anonymous',
       userEmail: userEmail || 'anonymous@email.com',
+      userName: userName || 'Anonymous',
       status: 'Submitted'
     };
     
@@ -119,7 +141,7 @@ export const createStartup = async (req, res) => {
     console.log('Startup saved! ID:', saved._id);
     res.status(201).json(saved);
   } catch (error) {
-    console.error('Error:', error);
+    console.error('Error creating startup:', error);
     res.status(500).json({ error: error.message });
   }
 };
@@ -133,10 +155,10 @@ export const getMyStartups = async (req, res) => {
       return res.status(400).json({ error: 'User ID is required' });
     }
     const startups = await Startup.find({ userId }).sort({ createdAt: -1 });
-    console.log('Found:', startups.length);
+    console.log('Found:', startups.length, 'startups');
     res.json(startups);
   } catch (error) {
-    console.error('Error:', error);
+    console.error('Error fetching startups:', error);
     res.status(500).json({ error: error.message });
   }
 };
@@ -144,6 +166,7 @@ export const getMyStartups = async (req, res) => {
 export const getStartups = async (req, res) => {
   try {
     const startups = await Startup.find().sort({ createdAt: -1 });
+    console.log('Found:', startups.length, 'total startups');
     res.json(startups);
   } catch (error) {
     res.status(500).json({ error: error.message });
