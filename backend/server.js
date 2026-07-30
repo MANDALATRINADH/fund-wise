@@ -9,23 +9,15 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// CORS configuration
 app.use(cors({
   origin: '*',
   credentials: true
 }));
-
 app.use(express.json());
-
-// Log all requests
-app.use((req, res, next) => {
-  console.log('Request:', req.method, req.url);
-  next();
-});
 
 // Health check
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', message: 'Backend is running on Render' });
+  res.json({ status: 'ok', message: 'Backend is running' });
 });
 
 // Root route
@@ -33,25 +25,33 @@ app.get('/', (req, res) => {
   res.json({ message: 'Fund-Wise API is running' });
 });
 
-// Mount startup routes
+// Routes
 app.use('/api/startups', startupRoutes);
 
 // 404 handler
 app.use((req, res) => {
-  res.status(404).json({ error: 'Route not found: ' + req.method + ' ' + req.url });
+  res.status(404).json({ error: 'Route not found' });
 });
 
-// MongoDB connection
+// MongoDB connection with better error handling
 const MONGODB_URI = process.env.MONGODB_URI;
 
-if (MONGODB_URI) {
-  mongoose.connect(MONGODB_URI)
-    .then(() => {
-      console.log('Connected to MongoDB');
-    })
-    .catch((err) => console.error('MongoDB connection error:', err));
+if (!MONGODB_URI) {
+  console.error('MONGODB_URI is not set in environment variables');
 } else {
-  console.log('No MongoDB URI provided');
+  console.log('Attempting to connect to MongoDB...');
+  
+  mongoose.connect(MONGODB_URI, {
+    serverSelectionTimeoutMS: 30000, // Increase timeout to 30 seconds
+    socketTimeoutMS: 45000
+  })
+  .then(() => {
+    console.log('Connected to MongoDB successfully!');
+  })
+  .catch((err) => {
+    console.error('MongoDB connection error:', err.message);
+    console.error('Please check your MONGODB_URI and network access.');
+  });
 }
 
 // Start server
