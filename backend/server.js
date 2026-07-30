@@ -9,7 +9,7 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// CORS configuration - allow all origins for testing
+// CORS configuration
 app.use(cors({
   origin: '*',
   credentials: true
@@ -17,16 +17,13 @@ app.use(cors({
 
 app.use(express.json());
 
-// Log all requests for debugging
+// Log all requests
 app.use((req, res, next) => {
   console.log(📥  );
   next();
 });
 
-// Routes - Make sure this is mounted correctly
-app.use('/api/startups', startupRoutes);
-
-// Health check
+// Health check - THIS MUST BE BEFORE OTHER ROUTES
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', message: 'Backend is running on Render' });
 });
@@ -36,7 +33,10 @@ app.get('/', (req, res) => {
   res.json({ message: 'Fund-Wise API is running' });
 });
 
-// 404 handler for undefined routes
+// Mount startup routes
+app.use('/api/startups', startupRoutes);
+
+// 404 handler
 app.use((req, res) => {
   res.status(404).json({ error: Route   not found });
 });
